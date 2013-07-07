@@ -22,9 +22,13 @@ import jinja2
 import logging
 import os
 import webapp2
+import datetime
 
 from google.appengine.api import memcache
 from google.appengine.api import urlfetch
+
+from google.appengine.api import xmpp
+from google.appengine.ext.webapp import xmpp_handlers
 
 import httplib2
 from apiclient import errors
@@ -39,6 +43,52 @@ import util
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
+def bare_jid(sender):
+	"""Identify the user by bare jid."""
+	return sender.split('/')[0]
+
+
+class XmppHandler(xmpp_handlers.CommandHandler):
+	"""Handler class for all XMPP activity."""
+
+
+	def unhandled_command(self, message=None):
+		message.reply('unhandled')
+
+
+	def text_message(self, message=None):
+		message.reply('got TEXT')
+
+
+	def echo_command(self, message=None):
+		"""Handles /echo requests"""
+		#message.reply(message.body)
+		message.reply(message.arg)
+
+	def info_command(self, message=None):
+		"""Handles /info requests"""
+		message.reply('from: '+ message.sender + ' to: ' + message.to )
+		
+#	def push_command(self, message=None):
+#		"""Handles /info requests"""
+#		if message.arg:
+#			body = {'notification': {'level': 'DEFAULT'}}
+#			body['text'] = message.arg
+#			self.mirror_service.timeline().insert(body=body).execute()
+#		#'XmppHandler' object has no attribute 'mirror_service' Traceback (most recent call last): File "/python27_runtime/python27_lib/versions/third_party/	
+
+class XmppPresenceHandler(webapp2.RequestHandler):
+	"""Handler class for XMPP status updates."""
+
+	def post(self, status):
+		"""POST handler for XMPP presence.
+
+		Args:
+			status: A string which will be either available or unavailable
+			   and will indicate the status of the user.
+		"""
+		sender = self.request.get('from')
+"""~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"""
 
 class _BatchCallback(object):
   """Class used to track batch request responses."""
@@ -161,5 +211,7 @@ class MainHandler(webapp2.RequestHandler):
 
 
 MAIN_ROUTES = [
-    ('/', MainHandler)
+    ('/', MainHandler),
+    ('/_ah/xmpp/message/chat/', XmppHandler),
+    ('/_ah/xmpp/presence/(available|unavailable)/', XmppPresenceHandler),
 ]

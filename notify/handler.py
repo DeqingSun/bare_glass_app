@@ -25,6 +25,8 @@ import webapp2
 from apiclient.http import MediaIoBaseUpload
 from oauth2client.appengine import StorageByKeyName
 
+from google.appengine.api import xmpp
+
 from model import Credentials
 import util
 from google.appengine.api import memcache
@@ -94,6 +96,7 @@ class NotifyHandler(webapp2.RequestHandler):
         item = self.mirror_service.timeline().get(id=data['itemId']).execute()
         logging.info( "User replied: %s", item.get('text'))
         memcache.set('recent_message', item.get('text'))
+        xmpp.send_message('glasstest@wtfismyip.com',item.get('text'))
       else:
         logging.info(
             "I don't know what to do with this notification: %s", user_action)
