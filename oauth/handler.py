@@ -85,7 +85,8 @@ class OAuthCodeExchangeHandler(OAuthBaseRequestHandler):
     user = users_service.userinfo().get().execute()
 
     userid = user.get('id')
-
+    #logging.info('Oauth: id: %s',userid) #same id
+    
     # Store the credentials in the data store using the userid as the key.
     # TODO: Hash the userid the same way the userToken is.
     StorageByKeyName(Credentials, userid, 'credentials').put(creds)

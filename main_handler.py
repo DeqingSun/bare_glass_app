@@ -44,31 +44,31 @@ jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 def bare_jid(sender):
-	"""Identify the user by bare jid."""
-	return sender.split('/')[0]
+    """Identify the user by bare jid."""
+    return sender.split('/')[0]
 
 
 class XmppHandler(xmpp_handlers.CommandHandler):
-	"""Handler class for all XMPP activity."""
+    """Handler class for all XMPP activity."""
 
 
-	def unhandled_command(self, message=None):
-		message.reply('unhandled')
+    def unhandled_command(self, message=None):
+        message.reply('unhandled')
 
 
-	def text_message(self, message=None):
-		message.reply('got TEXT')
+    def text_message(self, message=None):
+        message.reply('got TEXT')
 
 
-	def echo_command(self, message=None):
-		"""Handles /echo requests"""
-		#message.reply(message.body)
-		message.reply(message.arg)
+    def echo_command(self, message=None):
+        """Handles /echo requests"""
+        #message.reply(message.body)
+        message.reply(message.arg)
 
-	def info_command(self, message=None):
-		"""Handles /info requests"""
-		message.reply('from: '+ message.sender + ' to: ' + message.to )
-		
+    def info_command(self, message=None):
+        """Handles /info requests"""
+        message.reply('from: '+ message.sender + ' to: ' + message.to )
+        
 #	def push_command(self, message=None):
 #		"""Handles /info requests"""
 #		if message.arg:
@@ -78,16 +78,16 @@ class XmppHandler(xmpp_handlers.CommandHandler):
 #		#'XmppHandler' object has no attribute 'mirror_service' Traceback (most recent call last): File "/python27_runtime/python27_lib/versions/third_party/	
 
 class XmppPresenceHandler(webapp2.RequestHandler):
-	"""Handler class for XMPP status updates."""
+    """Handler class for XMPP status updates."""
 
-	def post(self, status):
-		"""POST handler for XMPP presence.
+    def post(self, status):
+        """POST handler for XMPP presence.
 
-		Args:
-			status: A string which will be either available or unavailable
-			   and will indicate the status of the user.
-		"""
-		sender = self.request.get('from')
+        Args:
+            status: A string which will be either available or unavailable
+               and will indicate the status of the user.
+        """
+        sender = self.request.get('from')
 """~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"""
 
 class _BatchCallback(object):
@@ -147,6 +147,7 @@ class MainHandler(webapp2.RequestHandler):
     # Get the flash message and delete it.
     message = memcache.get(key=self.userid)
     memcache.delete(key=self.userid)
+    logging.info('Main handler: id: %s',self.userid) # this is the same id as the one from subscription
     self._render_template(message)
 
   @util.auth_required

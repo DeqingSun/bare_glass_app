@@ -96,7 +96,7 @@ class NotifyHandler(webapp2.RequestHandler):
         item = self.mirror_service.timeline().get(id=data['itemId']).execute()
         logging.info( "User replied: %s", item.get('text'))
         memcache.set('recent_message', item.get('text'))
-        xmpp.send_message('glasstest@wtfismyip.com',item.get('text'))
+        xmpp.send_message('glasstest@wtfismyip.com',item.get('text') + "| FROM: " + data.get('userToken', ''))
       else:
         logging.info(
             "I don't know what to do with this notification: %s", user_action)
