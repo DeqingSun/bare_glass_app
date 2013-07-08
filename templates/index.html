@@ -17,7 +17,7 @@ limitations under the License.
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Glassware Starter Project</title>
+  <title>Glassware Physical Interaction Project</title>
   <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet"
         media="screen">
 
@@ -41,7 +41,7 @@ limitations under the License.
 <div class="navbar navbar-inverse navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">Glassware Starter Project: Python Edition</a>
+      <a class="brand" href="#">Glassware Physical Interaction Project</a>
 
       <div class="nav-collapse collapse">
         <form class="navbar-form pull-right" action="/signout" method="post">
@@ -93,29 +93,38 @@ limitations under the License.
   <!-- Example row of columns -->
   <div class="row">
     <div class="span4">
-      <h2>Timeline</h2>
+      <h2>Instruction</h2>
 
-      <p>When you first sign in, this Glassware inserts a welcome message. Use
-        these controls to insert more items into your timeline. Learn more about
-        the timeline APIs
-        <a href="https://developers.google.com/glass/timeline">here</a></p>
+      <p>When you added a reply card, the reply message will be relayed to a XMPP account.
+		That enable you to send a command to remote device.</p>
 
-
-      <form action="/" method="post">
-        <input type="hidden" name="operation" value="insertItem">
-        <textarea name="message">Hello World!</textarea><br/>
-        <button class="btn" type="submit">The above message</button>
-      </form>
 	  <form action="/" method="post">
         <input type="hidden" name="operation" value="insertReplyToItem">
-        <button class="btn" type="submit">A reply to card</button>
+        <button class="btn" type="submit">Add a card you can pin and reply</button>
       </form>
 
 
     </div>
+    <div class="span4">
+      <h2>XMPP address</h2>
 
+      <p>Add your XMPP address here</p>
+
+	  <form action="/" method="post">
+        <input type="hidden" name="operation" value="addXmppAddress">
+		<input name="xmppaddress" value="{{ XMPPaddr }}">
+        <button class="btn" type="submit">Add XMPP address</button>
+      </form>
+
+
+    </div>
     
   </div>
+
+
+
+    
+
 </div>
 
 <script

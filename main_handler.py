@@ -30,6 +30,8 @@ from google.appengine.api import urlfetch
 from google.appengine.api import xmpp
 from google.appengine.ext.webapp import xmpp_handlers
 
+import XMPP_addr_access
+
 import httplib2
 from apiclient import errors
 from apiclient.http import MediaIoBaseUpload
@@ -137,6 +139,8 @@ class MainHandler(webapp2.RequestHandler):
         template_values['timelineSubscriptionExists'] = True
       elif collection == 'locations':
         template_values['locationSubscriptionExists'] = True
+        
+    template_values['XMPPaddr'] = XMPP_addr_access.get_addr_from_id(self.userid)
 
     template = jinja_environment.get_template('templates/index.html')
     self.response.out.write(template.render(template_values))
@@ -157,7 +161,8 @@ class MainHandler(webapp2.RequestHandler):
     # Dict of operations to easily map keys to methods.
     operations = { 
         'insertItem': self._insert_item,
-        'insertReplyToItem': self._insert_replyto_item
+        'insertReplyToItem': self._insert_replyto_item,
+        'addXmppAddress': self._add_XMPP_address
     }
     if operation in operations:
       message = operations[operation]()
@@ -167,7 +172,12 @@ class MainHandler(webapp2.RequestHandler):
     memcache.set(key=self.userid, value=message, time=5)
     self.redirect('/')
 
+  def _add_XMPP_address(self):
+    addr=self.request.get('xmppaddress')
+    logging.info('add addr: %s',addr)
+    XMPP_addr_access.set_addr_id(addr,self.userid)	#add address and ID pair
 
+    return  'XMPP address added'
 
   def _insert_item(self):
     """Insert a timeline item."""

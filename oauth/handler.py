@@ -132,7 +132,7 @@ class OAuthCodeExchangeHandler(OAuthBaseRequestHandler):
 
     # Insert welcome message.
     timeline_item_body = {
-        'text': 'Welcome to the Python Quick Start',
+        'text': 'Welcome to Glassware Physical Interaction Project',
         'notification': {
             'level': 'DEFAULT'
         }

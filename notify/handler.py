@@ -22,6 +22,8 @@ import json
 import logging
 import webapp2
 
+import XMPP_addr_access
+
 from apiclient.http import MediaIoBaseUpload
 from oauth2client.appengine import StorageByKeyName
 
@@ -95,8 +97,10 @@ class NotifyHandler(webapp2.RequestHandler):
         # Fetch the timeline item.
         item = self.mirror_service.timeline().get(id=data['itemId']).execute()
         logging.info( "User replied: %s", item.get('text'))
-        memcache.set('recent_message', item.get('text'))
-        xmpp.send_message('glasstest@wtfismyip.com',item.get('text') + "| FROM: " + data.get('userToken', ''))
+        memcache.set('recent_message', item.get('text')) #for simple page
+        addr=XMPP_addr_access.get_addr_from_id(data.get('userToken', ''))
+        if addr is not None:
+            xmpp.send_message(addr,item.get('text'))
       else:
         logging.info(
             "I don't know what to do with this notification: %s", user_action)
