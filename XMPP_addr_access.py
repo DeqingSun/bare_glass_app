@@ -45,3 +45,18 @@ def get_addr_from_id(id):
             addr = None        
         memcache.set('ADDR of ' + id , addr)
         return addr
+
+def get_id_from_addr(addr):
+    id=memcache.get('ID of ' + addr)
+    if id is not None:
+        return id
+    else:
+        q=Address_pair.all().ancestor(addressbook_key(DEFAULT_ADDRESS_BOOK_NAME))
+        q.filter('address =', addr)
+        entity = q.get()
+        if entity is not None:
+            id = entity.userid
+        else:
+            id = None        
+        memcache.set('ID of ' + addr , id)
+        return id

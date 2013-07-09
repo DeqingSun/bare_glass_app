@@ -30,6 +30,9 @@ from google.appengine.api import urlfetch
 from google.appengine.api import xmpp
 from google.appengine.ext.webapp import xmpp_handlers
 
+from oauth2client.client import flow_from_clientsecrets
+from model import Credentials
+
 import XMPP_addr_access
 
 import httplib2
@@ -71,13 +74,17 @@ class XmppHandler(xmpp_handlers.CommandHandler):
         """Handles /info requests"""
         message.reply('from: '+ message.sender + ' to: ' + message.to )
         
-#	def push_command(self, message=None):
-#		"""Handles /info requests"""
-#		if message.arg:
-#			body = {'notification': {'level': 'DEFAULT'}}
-#			body['text'] = message.arg
-#			self.mirror_service.timeline().insert(body=body).execute()
-#		#'XmppHandler' object has no attribute 'mirror_service' Traceback (most recent call last): File "/python27_runtime/python27_lib/versions/third_party/	
+    def push_command(self, message=None):
+        """Handles /push requests"""
+        if message.arg:
+            id=XMPP_addr_access.get_id_from_addr(bare_jid(message.sender))
+            if id is not None:
+                creds=StorageByKeyName(Credentials, id, 'credentials').get()
+                mirror_service = util.create_service('mirror', 'v1', creds)
+                #logging.info('Main handler: cred: %s',creds)  
+                body = {'notification': {'level': 'DEFAULT'}}
+                body['text'] = message.arg
+                mirror_service.timeline().insert(body=body).execute()
 
 class XmppPresenceHandler(webapp2.RequestHandler):
     """Handler class for XMPP status updates."""
@@ -151,7 +158,7 @@ class MainHandler(webapp2.RequestHandler):
     # Get the flash message and delete it.
     message = memcache.get(key=self.userid)
     memcache.delete(key=self.userid)
-    logging.info('Main handler: id: %s',self.userid) # this is the same id as the one from subscription
+    logging.info('Main handler: id: %s',self.userid) # this is the same id as the one from subscription   
     self._render_template(message)
 
   @util.auth_required
