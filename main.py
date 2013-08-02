@@ -29,11 +29,12 @@ from notify.handler import NOTIFY_ROUTES
 from oauth.handler import OAUTH_ROUTES
 from signout.handler import SIGNOUT_ROUTES
 from simplepage.handler import SIMPLEPAGE_ROUTES
+from upload.handler import UPLOAD_ROUTES
 
 
 ROUTES = (
     ATTACHMENT_PROXY_ROUTES + MAIN_ROUTES + NOTIFY_ROUTES + OAUTH_ROUTES +
-    SIGNOUT_ROUTES + SIMPLEPAGE_ROUTES)
+    SIGNOUT_ROUTES + SIMPLEPAGE_ROUTES + UPLOAD_ROUTES)
 
 
 app = webapp2.WSGIApplication(ROUTES)
