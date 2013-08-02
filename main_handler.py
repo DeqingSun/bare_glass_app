@@ -246,8 +246,8 @@ class MainHandler(webapp2.RequestHandler):
     logging.info('Inserting timeline item')
     body = {
         'creator': {
-            'displayName': 'Python Starter Project',
-            'id': 'PYTHON_STARTER_PROJECT'
+            'displayName': 'Glassware Physical Interaction Project',
+            'id': 'GLASSWARE_PHYSICAL_INTERACTION_PROJECT'
         },
         'text': 'A test 4 physical interaction',
         'notification': {'level': 'DEFAULT'},
