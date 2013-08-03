@@ -4,6 +4,8 @@ import sys,os,xmpp,time,select
 
 import subprocess
 
+from subprocess import call
+import requests
 
 class Bot:
 
@@ -43,9 +45,20 @@ class Bot:
     
     def message_analyzer(self,body):	#handle incoming messages
         if (body.find('temperature')>=0):
-            sys.stdout.write('do sth' + '\n')
+            sys.stdout.write('sample internal temperature' + '\n')
             temperature_result=subprocess.check_output(["/opt/vc/bin/vcgencmd", "measure_temp"]).strip()
             self.stdio_message("/push CPU temperature of Pi is: "+temperature_result[5:])
+        if (body.find('picture')>=0):
+            call("fswebcam -S 20 -q --no-banner --crop 640x360 -r 640x480 -d /dev/video0 pic.jpg", shell=True)
+            if os.path.exists("pic.jpg"):
+                payload = {'xmpp_addr': 'remotedev@wtfismyip.com/pi', 'msg': 'Photo from Pi'}
+                my_files = {'file': open('pic.jpg', 'rb')}
+                r = requests.post('https://bareboneglass.appspot.com/upload',data=payload,files=my_files)
+                sys.stdout.write(str(r.status_code)+'\n')
+                sys.stdout.write(r.text)
+                os.remove("pic.jpg")
+            else:
+                sys.stdout.write("Something wrong with camera")  
 
     
 if __name__ == '__main__':
