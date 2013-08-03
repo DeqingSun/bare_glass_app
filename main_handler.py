@@ -77,7 +77,7 @@ class XmppHandler(xmpp_handlers.CommandHandler):
     def push_command(self, message=None):
         """Handles /push requests"""
         if message.arg:
-            id=XMPP_addr_access.get_id_from_addr(bare_jid(message.sender))
+            id=XMPP_addr_access.get_id_from_addr(message.sender)
             if id is not None:
                 creds=StorageByKeyName(Credentials, id, 'credentials').get()
                 mirror_service = util.create_service('mirror', 'v1', creds)
